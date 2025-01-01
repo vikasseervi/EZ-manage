@@ -1,5 +1,6 @@
 package com.vikas.EZmanage.controller;
 
+import com.vikas.EZmanage.dto.EmployeeRequest;
 import com.vikas.EZmanage.entity.Auth;
 import com.vikas.EZmanage.entity.Employee;
 import com.vikas.EZmanage.entity.EmployeeRole;
@@ -7,6 +8,7 @@ import com.vikas.EZmanage.entity.Role;
 import com.vikas.EZmanage.service.AuthService;
 import com.vikas.EZmanage.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +21,8 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-//    @Autowired
-//    private AuthService authService;
+    @Autowired
+    private AuthService authService;
 //
 //    @Autowired
 //    private RoleService roleService;
@@ -41,8 +43,8 @@ public class EmployeeController {
 
     // --- EMPLOYEE ENDPOINTS ---
     @PostMapping("/employees")
-    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
-        return ResponseEntity.ok(employeeService.save(employee));
+    public ResponseEntity<Employee> createEmployee(@RequestBody EmployeeRequest employee) {
+        return ResponseEntity.ok(authService.signUp(employee));
     }
 
     @GetMapping("/employees")
