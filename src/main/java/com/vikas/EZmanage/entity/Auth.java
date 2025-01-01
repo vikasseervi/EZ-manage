@@ -29,6 +29,13 @@ public class Auth {
         this.active = active;
     }
 
+    private Auth(AuthBuilder builder) {
+        this.id = builder.id;
+        this.username = builder.username;
+        this.passwordHash = builder.passwordHash;
+        this.active = builder.active;
+    }
+
     public Long getId( ) {
         return id;
     }
@@ -69,5 +76,38 @@ public class Auth {
                 ", passwordHash='" + passwordHash + '\'' +
                 ", active=" + active +
                 '}';
+    }
+
+    public static class AuthBuilder {
+        private Long id;
+        private String username;
+        private String passwordHash;
+        private Boolean active = true;
+
+        public AuthBuilder() { }
+
+        public AuthBuilder id(Long id){
+            this.id = id;
+            return this;
+        }
+
+        public AuthBuilder username(String username){
+            this.username = username;
+            return this;
+        }
+
+        public AuthBuilder passwordHash(String passwordHash) {
+            this.passwordHash = passwordHash;
+            return this;
+        }
+
+        public AuthBuilder active(Boolean active) {
+            this.active = active;
+            return this;
+        }
+
+        public Auth build() {
+            return new Auth(this);
+        }
     }
 }

@@ -1,10 +1,10 @@
 CREATE DATABASE IF NOT EXISTS EZ_Manage;
 USE EZ_Manage;
 
-DROP TABLE IF EXISTS employee_roles;
+DROP TABLE IF EXISTS employee_role;
 DROP TABLE IF EXISTS employee;
 DROP TABLE IF EXISTS auth;
-DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS role;
 
 -- Authentication Table
 CREATE TABLE auth (
@@ -25,18 +25,18 @@ CREATE TABLE employee (
 );
 
 -- Roles Table
-CREATE TABLE roles (
+CREATE TABLE role (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     role_name VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- Employee Roles Mapping Table
-CREATE TABLE employee_roles (
+CREATE TABLE employee_role (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     employee_id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,
     FOREIGN KEY (employee_id) REFERENCES employee (id) ON DELETE CASCADE,
-    FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES role (id) ON DELETE CASCADE,
     UNIQUE KEY (employee_id, role_id)
 );
 
@@ -56,12 +56,12 @@ INSERT INTO employee (auth_id, first_name, last_name, email) VALUES
     (5, 'Anusha', 'Reddy', 'anusha@reddy'),
     (6, 'Vikas', 'Seervi', 'vikas@seervi');
 
-INSERT INTO roles (role_name) VALUES
+INSERT INTO role (role_name) VALUES
     ('ROLE_EMPLOYEE'),
     ('ROLE_MANAGER'),
     ('ROLE_ADMIN');
 
-INSERT INTO employee_roles (employee_id, role_id) VALUES
+INSERT INTO employee_role (employee_id, role_id) VALUES
     (1, 1), -- Abdul: ROLE_EMPLOYEE
     (2, 1), -- Yash: ROLE_EMPLOYEE
     (3, 1), -- Pratibha: ROLE_EMPLOYEE

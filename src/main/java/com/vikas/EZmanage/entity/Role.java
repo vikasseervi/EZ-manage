@@ -3,8 +3,8 @@ package com.vikas.EZmanage.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "roles")
-public class Roles {
+@Table(name = "role")
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +18,9 @@ public class Roles {
     @Column(name = "role_name", nullable = false, unique = true)
     private RoleName roleName;
 
-    public Roles( ) {}
+    public Role( ) {}
 
-    public Roles(Long id, RoleName roleName) {
+    public Role(Long id, RoleName roleName) {
         this.id = id;
         this.roleName = roleName;
     }
@@ -43,7 +43,7 @@ public class Roles {
 
     @Override
     public String toString( ) {
-        return "Roles{" +
+        return "Role{" +
                 "id=" + id +
                 ", roleName=" + roleName +
                 '}';

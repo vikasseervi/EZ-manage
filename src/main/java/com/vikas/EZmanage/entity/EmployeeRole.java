@@ -3,9 +3,9 @@ package com.vikas.EZmanage.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "employee_roles",
+@Table(name = "employee_role",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"employee_id", "role_id"})})
-public class EmployeeRoles {
+public class EmployeeRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,12 +17,12 @@ public class EmployeeRoles {
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false, referencedColumnName = "id")
-    private Roles role;
+    private Role role;
 
-    public EmployeeRoles( ) {
+    public EmployeeRole( ) {
     }
 
-    public EmployeeRoles(Long id, Employee employee, Roles role) {
+    public EmployeeRole(Long id, Employee employee, Role role) {
         this.id = id;
         this.employee = employee;
         this.role = role;
@@ -44,17 +44,17 @@ public class EmployeeRoles {
         this.employee = employee;
     }
 
-    public Roles getRole( ) {
+    public Role getRole( ) {
         return role;
     }
 
-    public void setRole(Roles role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
     @Override
     public String toString( ) {
-        return "EmployeeRoles{" +
+        return "EmployeeRole{" +
                 "id=" + id +
                 ", employeeId=" + employee +
                 ", roleId=" + role +

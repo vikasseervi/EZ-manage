@@ -1,19 +1,20 @@
 package com.vikas.EZmanage.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "employee")
 public class Employee {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @OneToOne()
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "auth_id", nullable = false, referencedColumnName = "id")
+    @JsonIgnore
     private Auth auth;
 
     @Column(name = "first_name", length = 50)
@@ -33,6 +34,14 @@ public class Employee {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+    }
+
+    private Employee(EmployeeBuilder builder) {
+        this.id = builder.id;
+        this.auth = builder.auth;
+        this.firstName = builder.firstName;
+        this.lastName = builder.lastName;
+        this.email = builder.email;
     }
 
     public Long getId( ) {
@@ -84,6 +93,45 @@ public class Employee {
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    public static class EmployeeBuilder {
+        private Long id;
+        private Auth auth;
+        private String firstName;
+        private String lastName;
+        private String email;
+
+        public EmployeeBuilder() {}
+
+        public EmployeeBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public EmployeeBuilder auth(Auth auth) {
+            this.auth = auth;
+            return this;
+        }
+
+        public EmployeeBuilder firstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public EmployeeBuilder lastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public EmployeeBuilder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Employee build() {
+            return new Employee(this);
+        }
     }
 }
 
