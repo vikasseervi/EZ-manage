@@ -28,4 +28,8 @@ public class EmployeeService {
     public Employee findById(Long id) {
         return employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found"));
     }
+
+    public void deleteById(Long id){
+        employeeRepository.deleteById(id);
+    }
 }

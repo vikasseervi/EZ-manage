@@ -25,6 +25,11 @@ public class Role {
         this.roleName = roleName;
     }
 
+    public Role(RoleBuilder builder) {
+        this.id = builder.id;
+        this.roleName = builder.roleName;
+    }
+
     public Long getId( ) {
         return id;
     }
@@ -47,5 +52,23 @@ public class Role {
                 "id=" + id +
                 ", roleName=" + roleName +
                 '}';
+    }
+
+    public static class RoleBuilder {
+        private Long id;
+        private RoleName roleName;
+
+        public RoleBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+        public RoleBuilder roleName(RoleName roleName) {
+            this.roleName = roleName;
+            return this;
+        }
+        public Role build() {
+            return new Role(this);
+        }
+
     }
 }

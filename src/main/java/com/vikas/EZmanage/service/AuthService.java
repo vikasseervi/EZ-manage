@@ -1,6 +1,6 @@
 package com.vikas.EZmanage.service;
 
-import com.vikas.EZmanage.dto.EmployeeRequest;
+import com.vikas.EZmanage.dto.SignupRequestDTO;
 import com.vikas.EZmanage.entity.Auth;
 import com.vikas.EZmanage.entity.Employee;
 import com.vikas.EZmanage.repository.AuthRepository;
@@ -25,34 +25,27 @@ public class AuthService {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public Employee signUp(EmployeeRequest employeeRequest){
-        if(authRepository.findByUsername(employeeRequest.getUsername()).isPresent()){
+    public Employee signUp(SignupRequestDTO signupRequestDTO){
+        if(authRepository.findByUsername(signupRequestDTO.getUsername()).isPresent()){
             throw new RuntimeException("Username already exists.");
         }
 
-        String hashedPassword = passwordEncoder.encode(employeeRequest.getPassword());
+        String hashedPassword = passwordEncoder.encode(signupRequestDTO.getPassword());
 
         Auth auth = new Auth.AuthBuilder()
-                .username(employeeRequest.getUsername())
+                .username(signupRequestDTO.getUsername())
                 .passwordHash(hashedPassword)
                 .build();
 
-        authRepository.save(auth);
-
         Employee employee = new Employee.EmployeeBuilder()
                 .auth(auth)
-                .firstName(employeeRequest.getFirst_name())
-                .lastName(employeeRequest.getLast_name())
-                .email(employeeRequest.getEmail())
+                .firstName(signupRequestDTO.getFirst_name())
+                .lastName(signupRequestDTO.getLast_name())
+                .email(signupRequestDTO.getEmail())
                 .build();
 
         employeeService.save(employee);
 
         return employee;
     }
-
-    public void saveEmployee(Employee employee) {
-
-    }
-
 }

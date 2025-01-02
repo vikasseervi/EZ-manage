@@ -1,6 +1,6 @@
 package com.vikas.EZmanage.controller;
 
-import com.vikas.EZmanage.dto.EmployeeRequest;
+import com.vikas.EZmanage.dto.SignupRequestDTO;
 import com.vikas.EZmanage.entity.Auth;
 import com.vikas.EZmanage.entity.Employee;
 import com.vikas.EZmanage.entity.EmployeeRole;
@@ -43,8 +43,8 @@ public class EmployeeController {
 
     // --- EMPLOYEE ENDPOINTS ---
     @PostMapping("/employees")
-    public ResponseEntity<Employee> createEmployee(@RequestBody EmployeeRequest employee) {
-        return ResponseEntity.ok(authService.signUp(employee));
+    public ResponseEntity<Employee> createEmployee(@RequestBody SignupRequestDTO signupRequestDTO) {
+        return ResponseEntity.ok(authService.signUp(signupRequestDTO));
     }
 
     @GetMapping("/employees")
@@ -55,6 +55,12 @@ public class EmployeeController {
     @GetMapping("/employees/{id}")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
         return ResponseEntity.ok(employeeService.findById(id));
+    }
+
+    @DeleteMapping("/employees/{id}")
+    public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
+        employeeService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
 //    // --- ROLE ENDPOINTS ---

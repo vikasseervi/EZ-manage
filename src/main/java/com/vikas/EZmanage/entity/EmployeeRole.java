@@ -28,6 +28,12 @@ public class EmployeeRole {
         this.role = role;
     }
 
+    private EmployeeRole(EmployeeRoleBuilder builder) {
+        this.id = builder.id;
+        this.employee = builder.employee;
+        this.role = builder.role;
+    }
+
     public Long getId( ) {
         return id;
     }
@@ -59,5 +65,27 @@ public class EmployeeRole {
                 ", employeeId=" + employee +
                 ", roleId=" + role +
                 '}';
+    }
+
+    public static class EmployeeRoleBuilder {
+        private Long id;
+        private Employee employee;
+        private Role role;
+
+        public EmployeeRoleBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+        public EmployeeRoleBuilder employee(Employee employee) {
+            this.employee = employee;
+            return this;
+        }
+        public EmployeeRoleBuilder role(Role role) {
+            this.role = role;
+            return this;
+        }
+        public EmployeeRole build() {
+            return new EmployeeRole(this);
+        }
     }
 }

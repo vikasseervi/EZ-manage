@@ -1,15 +1,15 @@
 package com.vikas.EZmanage.dto;
 
-public class EmployeeRequest {
+public class SignupRequestDTO {
     private String username;
     private String password;
     private String first_name;
     private String last_name;
     private String email;
 
-    public EmployeeRequest( ) {}
+    public SignupRequestDTO( ) {}
 
-    public EmployeeRequest(String username, String password, String first_name, String last_name, String email) {
+    public SignupRequestDTO(String username, String password, String first_name, String last_name, String email) {
         this.username = username;
         this.password = password;
         this.first_name = first_name;

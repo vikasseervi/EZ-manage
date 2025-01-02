@@ -13,7 +13,7 @@ public class Employee {
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "auth_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "auth_id", referencedColumnName = "id", nullable = false)
     @JsonIgnore
     private Auth auth;
 
