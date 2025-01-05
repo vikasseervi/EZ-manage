@@ -1,9 +1,13 @@
 package com.vikas.EZmanage.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(name = "role")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE,
+        region = "roleCache")
 public class Role {
 
     @Id

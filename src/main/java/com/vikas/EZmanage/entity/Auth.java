@@ -2,6 +2,7 @@ package com.vikas.EZmanage.entity;
 
 import jakarta.persistence.*;
 
+
 @Entity
 @Table(name = "auth")
 public class Auth {

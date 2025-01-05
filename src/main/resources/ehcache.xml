@@ -1,0 +1,18 @@
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://www.ehcache.org/ehcache.xsd">
+
+    <cache name="employeeCache"
+           maxElementsInMemory="1000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           memoryStoreEvictionPolicy="LIFO"
+    />
+
+    <cache name="roleCache"
+           maxElementsInMemory="1000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           memoryStoreEvictionPolicy="LIFO"
+    />
+
+</ehcache>

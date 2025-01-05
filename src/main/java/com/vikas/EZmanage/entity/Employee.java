@@ -2,9 +2,15 @@ package com.vikas.EZmanage.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+
 
 @Entity
 @Table(name = "employee")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE,
+        region = "employeeCache")
 public class Employee {
 
     @Id
@@ -12,7 +18,7 @@ public class Employee {
     @Column(name = "id")
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "auth_id", referencedColumnName = "id", nullable = false)
     @JsonIgnore
     private Auth auth;
