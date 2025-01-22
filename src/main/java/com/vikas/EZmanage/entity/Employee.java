@@ -1,16 +1,22 @@
 package com.vikas.EZmanage.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
 
+import java.util.Set;
+import java.util.Objects;
 
 @Entity
 @Table(name = "employee")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE,
-        region = "employeeCache")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "employeeCache")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 public class Employee {
 
     @Id
@@ -32,14 +38,23 @@ public class Employee {
     @Column(name = "email", nullable = false, unique = true, length = 100)
     private String email;
 
-    public Employee( ) {}
+    @ManyToMany
+    @JoinTable(
+            name = "employee_role",
+            joinColumns = @JoinColumn(name = "employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
 
-    public Employee(Long id, Auth auth, String firstName, String lastName, String email) {
+    public Employee() {}
+
+    public Employee(Long id, Auth auth, String firstName, String lastName, String email, Set<Role> roles) {
         this.id = id;
         this.auth = auth;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.roles = roles;
     }
 
     private Employee(EmployeeBuilder builder) {
@@ -48,9 +63,22 @@ public class Employee {
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
         this.email = builder.email;
+        this.roles = builder.roles;
     }
 
-    public Long getId( ) {
+    // Helper method to add a role
+    public void addRole(Role role) {
+        this.roles.add(role);
+        role.getEmployees().add(this);
+    }
+
+    // Helper method to remove a role
+    public void removeRole(Role role) {
+        this.roles.remove(role);
+        role.getEmployees().remove(this);
+    }
+
+    public Long getId() {
         return id;
     }
 
@@ -58,7 +86,7 @@ public class Employee {
         this.id = id;
     }
 
-    public Auth getAuth( ) {
+    public Auth getAuth() {
         return auth;
     }
 
@@ -66,7 +94,21 @@ public class Employee {
         this.auth = auth;
     }
 
-    public String getFirstName( ) {
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        if (roles != null && !roles.isEmpty()) {
+            this.roles = roles;
+            for (Role role : roles) {
+                addRole(role);
+            }
+        }
+    }
+
+
+    public String getFirstName() {
         return firstName;
     }
 
@@ -74,7 +116,7 @@ public class Employee {
         this.firstName = firstName;
     }
 
-    public String getLastName( ) {
+    public String getLastName() {
         return lastName;
     }
 
@@ -82,7 +124,7 @@ public class Employee {
         this.lastName = lastName;
     }
 
-    public String getEmail( ) {
+    public String getEmail() {
         return email;
     }
 
@@ -91,14 +133,28 @@ public class Employee {
     }
 
     @Override
-    public String toString( ) {
+    public String toString() {
         return "Employee{" +
                 "id=" + id +
-                ", auth_id=" + auth +
+                ", auth=" + auth +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
+                ", roles=" + roles +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return Objects.equals(id, employee.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public static class EmployeeBuilder {
@@ -107,6 +163,7 @@ public class Employee {
         private String firstName;
         private String lastName;
         private String email;
+        private Set<Role> roles;
 
         public EmployeeBuilder() {}
 
@@ -135,10 +192,17 @@ public class Employee {
             return this;
         }
 
+        public EmployeeBuilder roles(Set<Role> roles) {
+            this.roles = roles;
+            return this;
+        }
+
         public Employee build() {
             return new Employee(this);
         }
     }
+
+    public static EmployeeBuilder builder() {
+        return new EmployeeBuilder();
+    }
 }
-
-

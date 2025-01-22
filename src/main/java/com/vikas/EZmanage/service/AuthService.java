@@ -37,11 +37,12 @@ public class AuthService {
                 .passwordHash(hashedPassword)
                 .build();
 
-        Employee employee = new Employee.EmployeeBuilder()
+        Employee employee = Employee.builder()
                 .auth(auth)
                 .firstName(signupRequestDTO.getFirst_name())
                 .lastName(signupRequestDTO.getLast_name())
                 .email(signupRequestDTO.getEmail())
+                .roles(signupRequestDTO.getRoles())
                 .build();
 
         employeeService.save(employee);
