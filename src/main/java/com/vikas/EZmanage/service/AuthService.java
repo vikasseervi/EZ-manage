@@ -39,8 +39,8 @@ public class AuthService {
 
         Employee employee = Employee.builder()
                 .auth(auth)
-                .firstName(signupRequestDTO.getFirst_name())
-                .lastName(signupRequestDTO.getLast_name())
+                .firstName(signupRequestDTO.getFirstName())
+                .lastName(signupRequestDTO.getLastName())
                 .email(signupRequestDTO.getEmail())
                 .roles(signupRequestDTO.getRoles())
                 .build();

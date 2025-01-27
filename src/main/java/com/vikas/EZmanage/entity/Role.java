@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
 
@@ -27,7 +28,7 @@ public class Role {
 
     @ManyToMany(mappedBy = "roles")
     @JsonIgnore
-    private Set<Employee> employees;
+    private Set<Employee> employees = new HashSet<>();
 
     public Role() {}
 
@@ -45,7 +46,8 @@ public class Role {
 
     // Helper method to add an employee
     public void addEmployee(Employee employee) {
-        this.employees.add(employee);
+//        this.employees.add(employee);
+        if (employees == null) employees = new HashSet<>();
         employee.getRoles().add(this);
     }
 
@@ -76,11 +78,9 @@ public class Role {
     }
 
     public void setEmployees(Set<Employee> employees) {
-        if(employees != null && !employees.isEmpty()) {
-            this.employees = employees;
-            for(Employee employee : employees) {
-                addEmployee(employee);
-            }
+        this.employees = employees;
+        for(Employee employee : employees) {
+            addEmployee(employee);
         }
     }
 

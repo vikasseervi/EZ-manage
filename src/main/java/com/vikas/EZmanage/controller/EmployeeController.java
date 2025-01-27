@@ -18,11 +18,15 @@ import java.util.List;
 @RequestMapping("/ezmanage/employees")
 public class EmployeeController {
 
-    @Autowired
     private EmployeeService employeeService;
 
-    @Autowired
     private AuthService authService;
+
+    @Autowired
+    public EmployeeController(EmployeeService employeeService, AuthService authService) {
+        this.employeeService = employeeService;
+        this.authService = authService;
+    }
 
     @PostMapping
     public ResponseEntity<Employee> createEmployee(@RequestBody SignupRequestDTO signupRequestDTO) {

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
 
@@ -44,7 +45,7 @@ public class Employee {
             joinColumns = @JoinColumn(name = "employee_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     public Employee() {}
 
@@ -69,6 +70,7 @@ public class Employee {
     // Helper method to add a role
     public void addRole(Role role) {
 //        this.roles.add(role);
+        if(roles == null) roles = new HashSet<>();
         role.getEmployees().add(this);
     }
 
@@ -99,11 +101,9 @@ public class Employee {
     }
 
     public void setRoles(Set<Role> roles) {
-        if (roles != null && !roles.isEmpty()) {
-            this.roles = roles;
-            for (Role role : roles) {
-                addRole(role);
-            }
+        this.roles = roles;
+        for (Role role : roles) {
+            addRole(role);
         }
     }
 
@@ -136,11 +136,10 @@ public class Employee {
     public String toString() {
         return "Employee{" +
                 "id=" + id +
-                ", auth=" + auth +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", roles=" + roles +
+//                ", roles=" + roles +
                 '}';
     }
 
