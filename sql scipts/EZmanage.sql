@@ -41,12 +41,12 @@ CREATE TABLE employee_role (
 );
 
 INSERT INTO auth (username, password_hash, active) VALUES
-    ('abdul', '{bcrypt}$2a$12$pBdU.51Jmo2YKoN3ASkTyeXGRxoC5d6kirz7JHPcWwfHrSwiyIqTK', 1),
-    ('yash', '{bcrypt}$2a$12$pBdU.51Jmo2YKoN3ASkTyeXGRxoC5d6kirz7JHPcWwfHrSwiyIqTK', 1),
-    ('pratibha', '{bcrypt}$2a$12$pBdU.51Jmo2YKoN3ASkTyeXGRxoC5d6kirz7JHPcWwfHrSwiyIqTK', 1),
-    ('avani', '{bcrypt}$2a$12$pBdU.51Jmo2YKoN3ASkTyeXGRxoC5d6kirz7JHPcWwfHrSwiyIqTK', 1),
-    ('anusha', '{bcrypt}$2a$12$pBdU.51Jmo2YKoN3ASkTyeXGRxoC5d6kirz7JHPcWwfHrSwiyIqTK', 1),
-    ('vikas', '{bcrypt}$2a$12$pBdU.51Jmo2YKoN3ASkTyeXGRxoC5d6kirz7JHPcWwfHrSwiyIqTK', 1);
+    ('abdul', '$2a$10$NyshA8kmAzI3ubl3tfG5xeiqJEZfOcTViqIQoQlpQ6AtZNSzdmhU2', 1),
+    ('yash', '$2a$10$NyshA8kmAzI3ubl3tfG5xeiqJEZfOcTViqIQoQlpQ6AtZNSzdmhU2', 1),
+    ('pratibha', '$2a$10$NyshA8kmAzI3ubl3tfG5xeiqJEZfOcTViqIQoQlpQ6AtZNSzdmhU2', 1),
+    ('avani', '$2a$10$NyshA8kmAzI3ubl3tfG5xeiqJEZfOcTViqIQoQlpQ6AtZNSzdmhU2', 1),
+    ('anusha', '$2a$10$NyshA8kmAzI3ubl3tfG5xeiqJEZfOcTViqIQoQlpQ6AtZNSzdmhU2', 1),
+    ('vikas', '$2a$10$NyshA8kmAzI3ubl3tfG5xeiqJEZfOcTViqIQoQlpQ6AtZNSzdmhU2', 1);
 
 INSERT INTO employee (auth_id, first_name, last_name, email) VALUES
     (1, 'Abdul', 'Ahad', 'abdul@ahad'),

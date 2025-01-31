@@ -39,7 +39,7 @@ public class Employee {
     @Column(name = "email", nullable = false, unique = true, length = 100)
     private String email;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "employee_role",
             joinColumns = @JoinColumn(name = "employee_id"),
