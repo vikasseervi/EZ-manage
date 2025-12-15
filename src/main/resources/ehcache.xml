@@ -1,18 +1,25 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="http://www.ehcache.org/ehcache.xsd">
 
+    <!-- Hibernate L2 cache for Employee entity -->
     <cache name="employeeCache"
-           maxElementsInMemory="1000"
+           maxEntriesLocalHeap="1000"
            timeToIdleSeconds="300"
            timeToLiveSeconds="600"
-           memoryStoreEvictionPolicy="LIFO"
-    />
+           memoryStoreEvictionPolicy="LRU"/>
 
+    <!-- Hibernate L2 cache for Role entity -->
     <cache name="roleCache"
-           maxElementsInMemory="1000"
+           maxEntriesLocalHeap="500"
+           timeToIdleSeconds="600"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="LRU"/>
+
+    <!-- Spring cache for Employee DTO -->
+    <cache name="employeeDtoCache"
+           maxEntriesLocalHeap="1000"
            timeToIdleSeconds="300"
            timeToLiveSeconds="600"
-           memoryStoreEvictionPolicy="LIFO"
-    />
+           memoryStoreEvictionPolicy="LRU"/>
 
 </ehcache>

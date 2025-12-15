@@ -36,7 +36,7 @@ public class JWTRefreshFilter extends OncePerRequestFilter {
         JWTAuthenticationToken jwtAuthenticationToken = new JWTAuthenticationToken(refreshToken);
         Authentication authResult = authenticationManager.authenticate(jwtAuthenticationToken);
         if(authResult.isAuthenticated()) {
-            String newToken = jwtUtil.generateToken(authResult.getName(), 15); // 15 minutes expiry
+            String newToken = jwtUtil.generateToken(authResult.getName(), 5, authResult.getAuthorities()); // 5 minutes expiry
             response.setHeader("Authorization", "Bearer " + newToken);
         }
     }

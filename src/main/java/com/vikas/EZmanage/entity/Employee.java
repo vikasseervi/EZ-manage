@@ -54,14 +54,7 @@ public class Employee {
 
     public Employee() {}
 
-    public Employee(Long id,
-                    String username,
-                    String password,
-                    Boolean active,
-                    String firstName,
-                    String lastName,
-                    String email,
-                    Set<Role> roles) {
+    public Employee(Long id, String username, String password, Boolean active, String firstName, String lastName, String email, Set<Role> roles) {
         this.id = id;
         this.username = username;
         this.password = password;

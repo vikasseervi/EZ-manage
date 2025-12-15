@@ -63,7 +63,7 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         // depending on JWT or session
-        String JWTToken = jwtUtil.generateToken(auth.getName(), 15); // 15 minutes expiry
+        String JWTToken = jwtUtil.generateToken(auth.getName(), 15, auth.getAuthorities()); // 15 minutes expiry
         return JWTToken;
     }
 }

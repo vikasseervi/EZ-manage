@@ -39,17 +39,19 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         Authentication authResult = authenticationManager.authenticate(authToken);
 
         if(authResult.isAuthenticated()) {
-            String token = jwtUtil.generateToken(authResult.getName(), 1); // 15 minutes expiry
+            String token = jwtUtil.generateToken(authResult.getName(), 1, authResult.getAuthorities()); // 1 minutes expiry
             response.setHeader("Authorization", "Bearer " + token);
 
-            String refreshToken = jwtUtil.generateToken(authResult.getName(), 60 * 24 * 7); //  7 days expiry
+            System.out.println("*************" + authResult.getAuthorities() + "****************");
+
+            String refreshToken = jwtUtil.generateToken(authResult.getName(), 5, authResult.getAuthorities()); // 5 days expiry
 
             Cookie refreshTokenCookie = new Cookie("RefreshToken", refreshToken);
             refreshTokenCookie.setHttpOnly(true);
             refreshTokenCookie.setSecure(true);
             refreshTokenCookie.setAttribute("SameSite", "Strict"); // to prevent CSRF
             refreshTokenCookie.setPath("/ezmanage/auth/refresh");
-            refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7);
+            refreshTokenCookie.setMaxAge(5 * 60); // 5 minutes in seconds
             response.addCookie(refreshTokenCookie);
 
             // Send response body to display token and username on client side(postman etc)

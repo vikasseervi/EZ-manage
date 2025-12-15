@@ -1,18 +1,21 @@
 package com.vikas.EZmanage.service;
 
+import com.vikas.EZmanage.dto.EmployeeDTO;
 import com.vikas.EZmanage.dto.SignupRequestDTO;
 import com.vikas.EZmanage.entity.Employee;
 import com.vikas.EZmanage.entity.Role;
 import com.vikas.EZmanage.exception.ResourceNotFound;
 import com.vikas.EZmanage.repository.EmployeeRepository;
 import com.vikas.EZmanage.repository.RoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -22,18 +25,18 @@ public class EmployeeService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-
-    public EmployeeService(EmployeeRepository employeeRepository, RoleRepository roleRepository) {
+    public EmployeeService(EmployeeRepository employeeRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.employeeRepository = employeeRepository;
         this.roleRepository = roleRepository;
-        this.passwordEncoder = new BCryptPasswordEncoder();
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public Employee save(Employee employee) {
-        return employeeRepository.save(employee);
+    public EmployeeDTO save(Employee employee) {
+        return mapToDTO(employeeRepository.save(employee));
     }
 
-    public Employee signUp(SignupRequestDTO signupRequestDTO) {
+    @CacheEvict(value = {"employeeDtoCache", "employeeListCache"}, allEntries = true)
+    public EmployeeDTO signUp(SignupRequestDTO signupRequestDTO) {
         Employee employee = new Employee();
         employee.setUsername(signupRequestDTO.getUsername());
         employee.setFirstName(signupRequestDTO.getFirstName());
@@ -43,18 +46,24 @@ public class EmployeeService {
                 .orElseThrow(() -> new ResourceNotFound("Default role not found in DB"));
         employee.addRole(defaultRole);
         employee.setPassword(passwordEncoder.encode(signupRequestDTO.getPassword()));
-        return employeeRepository.save(employee);
+        return mapToDTO(employeeRepository.save(employee));
     }
 
-    public List<Employee> findAll() {
-        return employeeRepository.findAll();
+    @Cacheable(value = "employeeListCache")
+    public List<EmployeeDTO> findAll() {
+        List<Employee> employees = employeeRepository.findAll();
+        return employees.stream().map(this::mapToDTO).toList();
     }
 
-    public Employee findById(Long id) {
-        return employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Employee does not exists with given id : " + id));
+    @Cacheable(value = "employeeDtoCache", key = "#id")
+    public EmployeeDTO findById(Long id) {
+//        return employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Employee does not exists with given id : " + id));
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Employee does not exists with given id : " + id));
+        return mapToDTO(employee);
     }
 
-    public Employee update(Long employeeId, Employee updatedEmployee) {
+    @CachePut(value = "employeeDtoCache", key = "#employeeId")
+    public EmployeeDTO update(Long employeeId, Employee updatedEmployee) {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new ResourceNotFound("Employee does not exists with given id : " + employeeId));
         if(updatedEmployee.getFirstName() != null) employee.setFirstName(updatedEmployee.getFirstName());
         if(updatedEmployee.getLastName() != null) employee.setLastName(updatedEmployee.getLastName());
@@ -63,11 +72,23 @@ public class EmployeeService {
         if(updatedEmployee.getActive() != null) employee.setActive(updatedEmployee.getActive());
         if(updatedEmployee.getUsername() != null) employee.setUsername(updatedEmployee.getUsername());
 
-        return employeeRepository.save(employee);
+        return mapToDTO(employeeRepository.save(employee));
     }
 
+    @CacheEvict(value = {"employeeDtoCache", "employeeListCache"}, key = "#id")
     public void deleteById(Long id){
         employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Employee does not exists with given id : " + id));
         employeeRepository.deleteById(id);
+    }
+
+    private EmployeeDTO mapToDTO(Employee employee) {
+        EmployeeDTO dto = new EmployeeDTO();
+        dto.setUsername(employee.getUsername());
+        dto.setActive(employee.getActive());
+        dto.setFirstName(employee.getFirstName());
+        dto.setLastName(employee.getLastName());
+        dto.setEmail(employee.getEmail());
+        dto.setRoles(employee.getRoles().stream().map(role -> role.getRoleName().name()).collect(Collectors.toSet()));
+        return dto;
     }
 }

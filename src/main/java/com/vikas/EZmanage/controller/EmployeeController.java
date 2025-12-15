@@ -1,5 +1,6 @@
 package com.vikas.EZmanage.controller;
 
+import com.vikas.EZmanage.dto.EmployeeDTO;
 import com.vikas.EZmanage.dto.SignupRequestDTO;
 import com.vikas.EZmanage.entity.Employee;
 import com.vikas.EZmanage.service.EmployeeService;
@@ -23,25 +24,25 @@ public class EmployeeController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Employee> createEmployee(@RequestBody SignupRequestDTO signupRequestDTO) {
+    public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody SignupRequestDTO signupRequestDTO) {
         return ResponseEntity.ok(employeeService.signUp(signupRequestDTO));
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")
-    public ResponseEntity<List<Employee>> getAllEmployees() {
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
         return ResponseEntity.ok(employeeService.findAll());
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long id) {
         return ResponseEntity.ok(employeeService.findById(id));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable("id") Long employeeId, @RequestBody Employee updatedEmployee) {
+    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable("id") Long employeeId, @RequestBody Employee updatedEmployee) {
         return ResponseEntity.ok(employeeService.update(employeeId, updatedEmployee));
     }
 
