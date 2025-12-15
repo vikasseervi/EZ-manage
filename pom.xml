@@ -94,7 +94,35 @@
 			<version>1.1.1</version>
 		</dependency>
 
+
+        <!--  Using this, we can store different sessions in DB.-->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-jdbc</artifactId>
+        </dependency>
+
+<!-- Core JJWT API for building and parsing JWT tokens -->
+       <dependency>
+           <groupId>io.jsonwebtoken</groupId>
+           <artifactId>jjwt-api</artifactId>
+           <version>0.12.6</version>
+       </dependency>
+       <!-- Runtime implementation of JJWT (signing/verification/generating engines) -->
+       <dependency>
+           <groupId>io.jsonwebtoken</groupId>
+           <artifactId>jjwt-impl</artifactId>
+           <version>0.12.6</version>
+           <scope>runtime</scope>
+       </dependency>
+       <!-- Jackson serializer/deserializer support for JJWT -->
+       <dependency>
+           <groupId>io.jsonwebtoken</groupId>
+           <artifactId>jjwt-jackson</artifactId>
+           <version>0.12.6</version>
+       </dependency>
+
 	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>

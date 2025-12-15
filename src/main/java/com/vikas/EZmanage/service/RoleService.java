@@ -16,7 +16,7 @@ public class RoleService {
 
     @Autowired
     public RoleService(RoleRepository roleRepository) {
-        this.roleRepository =roleRepository;
+        this.roleRepository = roleRepository;
     }
 
     public List<Role> findAll() {
@@ -28,7 +28,6 @@ public class RoleService {
     }
 
     public void deleteById(Long id) {
-
         roleRepository.deleteById(id);
     }
 

@@ -25,10 +25,15 @@ public class Employee {
     @Column(name = "id")
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "auth_id", referencedColumnName = "id", nullable = false)
+    @Column(name = "username", nullable = false, unique = true, length = 50)
+    private String username;
+
     @JsonIgnore
-    private Auth auth;
+    @Column(name = "password_hash", nullable = false, length = 68)
+    private String password;
+
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
 
     @Column(name = "first_name", length = 50)
     private String firstName;
@@ -49,35 +54,57 @@ public class Employee {
 
     public Employee() {}
 
-    public Employee(Long id, Auth auth, String firstName, String lastName, String email, Set<Role> roles) {
+    public Employee(Long id,
+                    String username,
+                    String password,
+                    Boolean active,
+                    String firstName,
+                    String lastName,
+                    String email,
+                    Set<Role> roles) {
         this.id = id;
-        this.auth = auth;
+        this.username = username;
+        this.password = password;
+        this.active = active == null ? true : active;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.roles = roles;
+        this.roles = roles == null ? new HashSet<>() : roles;
+        // maintain bidirectional links
+        for (Role r : this.roles) {
+            r.getEmployees().add(this);
+        }
     }
 
     private Employee(EmployeeBuilder builder) {
         this.id = builder.id;
-        this.auth = builder.auth;
+        this.username = builder.username;
+        this.password = builder.password;
+        this.active = builder.active == null ? true : builder.active;
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
         this.email = builder.email;
-        this.roles = builder.roles;
+        this.roles = builder.roles == null ? new HashSet<>() : builder.roles;
+        for (Role r : this.roles) {
+            r.getEmployees().add(this);
+        }
     }
 
     // Helper method to add a role
     public void addRole(Role role) {
-//        this.roles.add(role);
-        if(roles == null) roles = new HashSet<>();
-        role.getEmployees().add(this);
+        if (roles == null) roles = new HashSet<>();
+        if (role == null) return;
+        if (roles.add(role)) {
+            role.getEmployees().add(this);
+        }
     }
 
     // Helper method to remove a role
     public void removeRole(Role role) {
-        this.roles.remove(role);
-        role.getEmployees().remove(this);
+        if (roles == null || role == null) return;
+        if (roles.remove(role)) {
+            role.getEmployees().remove(this);
+        }
     }
 
     public Long getId() {
@@ -88,12 +115,28 @@ public class Employee {
         this.id = id;
     }
 
-    public Auth getAuth() {
-        return auth;
+    public String getUsername() {
+        return username;
     }
 
-    public void setAuth(Auth auth) {
-        this.auth = auth;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public Set<Role> getRoles() {
@@ -101,12 +144,20 @@ public class Employee {
     }
 
     public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-        for (Role role : roles) {
-            addRole(role);
+        // clear existing bidirectional links
+        if (this.roles != null) {
+            for (Role r : new HashSet<>(this.roles)) {
+                removeRole(r);
+            }
+        }
+        if (roles != null) {
+            for (Role r : roles) {
+                addRole(r);
+            }
+        } else {
+            this.roles = new HashSet<>();
         }
     }
-
 
     public String getFirstName() {
         return firstName;
@@ -136,10 +187,11 @@ public class Employee {
     public String toString() {
         return "Employee{" +
                 "id=" + id +
+                ", username='" + username + '\'' +
+                ", active=" + active +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-//                ", roles=" + roles +
                 '}';
     }
 
@@ -158,7 +210,9 @@ public class Employee {
 
     public static class EmployeeBuilder {
         private Long id;
-        private Auth auth;
+        private String username;
+        private String password;
+        private Boolean active = true;
         private String firstName;
         private String lastName;
         private String email;
@@ -171,8 +225,18 @@ public class Employee {
             return this;
         }
 
-        public EmployeeBuilder auth(Auth auth) {
-            this.auth = auth;
+        public EmployeeBuilder username(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public EmployeeBuilder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public EmployeeBuilder active(Boolean active) {
+            this.active = active;
             return this;
         }
 

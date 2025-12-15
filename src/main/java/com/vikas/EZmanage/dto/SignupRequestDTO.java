@@ -1,6 +1,7 @@
 package com.vikas.EZmanage.dto;
 
 import com.vikas.EZmanage.entity.Role;
+import java.util.HashSet;
 import java.util.Set;
 
 public class SignupRequestDTO {
@@ -9,17 +10,15 @@ public class SignupRequestDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private Set<Role> roles;
 
     public SignupRequestDTO( ) {}
 
-    public SignupRequestDTO(String username, String password, String firstName, String lastName, String email, Set<Role> roles) {
+    public SignupRequestDTO(String username, String password, String firstName, String lastName, String email) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.roles = roles;
     }
 
     public String getUsername( ) {
@@ -62,14 +61,6 @@ public class SignupRequestDTO {
         this.email = email;
     }
 
-    public Set<Role> getRoles( ) {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
     @Override
     public String toString() {
         return "SignupRequestDTO{" +
@@ -77,8 +68,7 @@ public class SignupRequestDTO {
                 ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", roles=" + roles +
+                ", email='" + email +
                 '}';
     }
 }

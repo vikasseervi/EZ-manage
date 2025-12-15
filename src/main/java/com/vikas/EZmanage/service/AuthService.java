@@ -1,52 +1,70 @@
 package com.vikas.EZmanage.service;
 
+import com.vikas.EZmanage.dto.LoginRequestDTO;
 import com.vikas.EZmanage.dto.SignupRequestDTO;
-import com.vikas.EZmanage.entity.Auth;
 import com.vikas.EZmanage.entity.Employee;
-import com.vikas.EZmanage.repository.AuthRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.vikas.EZmanage.entity.Role;
+import com.vikas.EZmanage.repository.EmployeeRepository;
+import com.vikas.EZmanage.repository.RoleRepository;
+import com.vikas.EZmanage.util.JWTUtil;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-@Transactional
 @Service
 public class AuthService {
 
-    private final AuthRepository authRepository;
-    private final EmployeeService employeeService;
+    private final EmployeeRepository employeeRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final  JWTUtil jwtUtil;
 
-    @Autowired
-    public AuthService(AuthRepository authRepository, EmployeeService employeeService) {
-        this.authRepository = authRepository;
-        this.employeeService = employeeService;
-        this.passwordEncoder = new BCryptPasswordEncoder();
+
+    public AuthService(EmployeeRepository employeeRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
+        this.employeeRepository = employeeRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
     }
 
-    public Employee signUp(SignupRequestDTO signupRequestDTO){
-        if(authRepository.findByUsername(signupRequestDTO.getUsername()).isPresent()){
-            throw new RuntimeException("Username already exists.");
-        }
+    public void register(SignupRequestDTO dto) {
 
-        String hashedPassword = passwordEncoder.encode(signupRequestDTO.getPassword());
+        employeeRepository.findByUsername(dto.getUsername())
+            .ifPresent(u -> { throw new IllegalArgumentException("Username already taken"); });
 
-        Auth auth = new Auth.AuthBuilder()
-                .username(signupRequestDTO.getUsername())
-                .passwordHash(hashedPassword)
-                .build();
+        Employee employee = new Employee();
+        employee.setUsername(dto.getUsername());
+        employee.setPassword(passwordEncoder.encode(dto.getPassword()));
+        employee.setFirstName(dto.getFirstName());
+        employee.setLastName(dto.getLastName());
+        employee.setEmail(dto.getEmail());
+        employee.setActive(true);
 
-        Employee employee = Employee.builder()
-                .auth(auth)
-                .firstName(signupRequestDTO.getFirstName())
-                .lastName(signupRequestDTO.getLastName())
-                .email(signupRequestDTO.getEmail())
-                .roles(signupRequestDTO.getRoles())
-                .build();
+        Role defaultRole = roleRepository
+                .findByRoleName(Role.RoleName.ROLE_EMPLOYEE)
+                .orElseThrow(() -> new IllegalStateException("Default role ROLE_EMPLOYEE not found"));
 
-        employeeService.save(employee);
+        employee.getRoles().add(defaultRole);
 
-        return employee;
+        employeeRepository.save(employee);
+    }
+
+    public String login(LoginRequestDTO dto) {
+
+        // if you're not using JWT or sessions manually, this alone is enough for basic auth flows
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        // depending on JWT or session
+        String JWTToken = jwtUtil.generateToken(auth.getName(), 15); // 15 minutes expiry
+        return JWTToken;
     }
 }
+
