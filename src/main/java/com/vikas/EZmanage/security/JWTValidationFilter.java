@@ -23,6 +23,10 @@ public class JWTValidationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        if(SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         String bearerToken = request.getHeader("Authorization");
         String jwtToken = null;
         if(bearerToken != null && bearerToken.startsWith("Bearer ")) {

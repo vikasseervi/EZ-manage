@@ -29,7 +29,7 @@ public class Employee {
     private String username;
 
     @JsonIgnore
-    @Column(name = "password_hash", nullable = false, length = 68)
+    @Column(name = "password_hash", nullable = true, length = 68)
     private String password;
 
     @Column(name = "active", nullable = false)

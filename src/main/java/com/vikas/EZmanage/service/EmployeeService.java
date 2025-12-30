@@ -91,4 +91,20 @@ public class EmployeeService {
         dto.setRoles(employee.getRoles().stream().map(role -> role.getRoleName().name()).collect(Collectors.toSet()));
         return dto;
     }
+
+    public Employee registerOrFetchOAuthUser(String email, String firstName, String lastName) {
+        return employeeRepository.findByEmail(email)
+                .orElseGet(() -> {
+                    Employee newEmployee = new Employee();
+                    newEmployee.setEmail(email);
+                    newEmployee.setUsername(email);
+                    newEmployee.setFirstName(firstName);
+                    newEmployee.setLastName(lastName);
+                    newEmployee.setActive(true);
+
+                    roleRepository.findByRoleName(Role.RoleName.ROLE_EMPLOYEE).ifPresent(newEmployee::addRole);
+
+                    return employeeRepository.save(newEmployee);
+                });
+    }
 }

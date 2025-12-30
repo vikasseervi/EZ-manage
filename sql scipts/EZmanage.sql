@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS role;
 CREATE TABLE employee (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
-    password_hash VARCHAR(68) NOT NULL,
+    password_hash VARCHAR(68),
     active BOOLEAN DEFAULT TRUE,
     first_name VARCHAR(50),
     last_name VARCHAR(50),

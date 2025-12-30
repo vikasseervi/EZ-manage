@@ -1,10 +1,12 @@
 package com.vikas.EZmanage.authenticationProvider;
 
+import com.vikas.EZmanage.security.EmployeeUserDetails;
 import com.vikas.EZmanage.security.EmployeeUserDetailsService;
 import com.vikas.EZmanage.token.JWTAuthenticationToken;
 import com.vikas.EZmanage.util.JWTUtil;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -28,14 +30,22 @@ public class JWTAuthenticationProvider implements AuthenticationProvider {
         String username = jwtUtil.validateTokenAndGetUsername(token);
 
         if (username == null) {
-            throw new BadCredentialsException("Invalid JWT token");
+            throw new BadCredentialsException("Invalid or Expired JWT token");
         }
 
-        List<GrantedAuthority> authorities = jwtUtil.getAuthoritiesFromToken(token);
-        return new JWTAuthenticationToken(token, username, authorities);
+        EmployeeUserDetails employeeUserDetails = employeeUserDetailsService.loadUserByUsername(username);
 
-//        EmployeeUserDetails employeeUserDetails = employeeUserDetailsService.loadUserByUsername(username);
-//        return new UsernamePasswordAuthenticationToken(employeeUserDetails, null, employeeUserDetails.getAuthorities());
+        if(!employeeUserDetails.isEnabled()) {  // check if user is active/enabled by active flag
+            throw new DisabledException("User account is disabled/inactive");
+        }
+
+        return new JWTAuthenticationToken(token, employeeUserDetails.getUsername(), employeeUserDetails.getAuthorities());
+
+//        List<GrantedAuthority> authorities = jwtUtil.getAuthoritiesFromToken(token);
+//        return new JWTAuthenticationToken(token, username, authorities);
+
+        //        EmployeeUserDetails employeeUserDetails = employeeUserDetailsService.loadUserByUsername(username);
+        //        return new UsernamePasswordAuthenticationToken(employeeUserDetails, null, employeeUserDetails.getAuthorities());
     }
 
     @Override

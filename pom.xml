@@ -94,8 +94,7 @@
 			<version>1.1.1</version>
 		</dependency>
 
-
-        <!--  Using this, we can store different sessions in DB.-->
+<!--  Using this we can store different sessions in DB.-->
         <dependency>
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-jdbc</artifactId>
@@ -120,6 +119,12 @@
            <artifactId>jjwt-jackson</artifactId>
            <version>0.12.6</version>
        </dependency>
+
+<!-- Iss se OAuth dependencies add hojati h!!! -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
 
 	</dependencies>
 

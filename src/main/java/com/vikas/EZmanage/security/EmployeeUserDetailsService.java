@@ -3,6 +3,7 @@ package com.vikas.EZmanage.security;
 import com.vikas.EZmanage.entity.Employee;
 import com.vikas.EZmanage.entity.Role;
 import com.vikas.EZmanage.repository.EmployeeRepository;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,6 +27,7 @@ public class EmployeeUserDetailsService implements UserDetailsService {
     public EmployeeUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Employee employee = employeeRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
         return EmployeeUserDetails.builder()
                 .username(employee.getUsername())
                 .password(employee.getPassword())
